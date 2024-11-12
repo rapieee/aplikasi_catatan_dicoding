@@ -3,7 +3,7 @@ import App from './App';
 
 
 test('renders header and input form for notes', () => {
-  render(<App />);
+  render(<App/>);
   
   // Memastikan header aplikasi catatan muncul
   expect(screen.getByText(/notes app/i)).toBeInTheDocument();

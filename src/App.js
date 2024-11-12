@@ -1,37 +1,53 @@
-import React, { useState } from 'react';
-import './styles.css';  // Pastikan file CSS ada
+import React, { useState, useEffect } from 'react';
+import './styles.css';
 
-const App = () => {
-  const [notes, setNotes] = useState([
-    { id: 1, title: 'Catatan 1', content: 'Isi catatan pertama', archived: false },
-    { id: 2, title: 'Catatan 2', content: 'Isi catatan kedua', archived: false },
-    { id: 3, title: 'Catatan 3', content: 'Isi catatan ketiga', archived: true },
-  ]);
-  const [newNote, setNewNote] = useState({ title: '', content: '' });
+const App = ({ initialNotes }) => {
+  const [notes, setNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewNote({ ...newNote, [name]: value });
+  // Inisialisasi state `notes` dengan data awal dari `initialNotes`
+  useEffect(() => {
+    setNotes(initialNotes);
+  }, [initialNotes]);
+
+  // Fungsi untuk memformat tanggal dengan format yang lebih rapi
+  const formatDate = (date) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(date).toLocaleDateString('id-ID', options);
   };
 
-  const handleAddNote = (e) => {
+  // Fungsi untuk menambahkan catatan baru
+  const addNote = (e) => {
     e.preventDefault();
-    if (newNote.title && newNote.content) {
-      setNotes([
-        ...notes,
-        { id: notes.length + 1, title: newNote.title, content: newNote.content, archived: false },
-      ]);
-      setNewNote({ title: '', content: '' });
-    }
+    const title = e.target.title.value;
+    const body = e.target.body.value;
+    const newNote = {
+      id: Date.now(),
+      title,
+      body,
+      createdAt: new Date().toISOString(),
+      archived: false,
+    };
+    setNotes([...notes, newNote]);
+    e.target.reset();
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+  // Fungsi untuk mengarsipkan atau mengaktifkan kembali catatan
+  const toggleArchiveNote = (id) => {
+    setNotes(notes.map(note => 
+      note.id === id ? { ...note, archived: !note.archived } : note
+    ));
   };
 
-  const filteredNotes = notes.filter(
-    (note) => note.title.toLowerCase().includes(searchTerm.toLowerCase()) && !note.archived
+  // Fungsi untuk menghapus catatan
+  const deleteNote = (id) => {
+    setNotes(notes.filter(note => note.id !== id));
+  };
+
+  // Fungsi untuk mencari catatan berdasarkan judul atau isi catatan
+  const filteredNotes = notes.filter(note => 
+    (note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+     note.body.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -40,32 +56,19 @@ const App = () => {
         <h1>Notes App</h1>
       </header>
 
-      {/* Pencarian */}
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Cari Catatan..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       <div className="form-and-search">
-        {/* Formulir untuk menambah catatan */}
-        <form className="note-form" onSubmit={handleAddNote}>
-          <input
-            type="text"
-            name="title"
-            placeholder="Judul Catatan"
-            value={newNote.title}
-            onChange={handleInputChange}
+        <div className="search-box">
+          <input 
+            type="text" 
+            placeholder="Cari Catatan..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <textarea
-            name="content"
-            placeholder="Isi Catatan"
-            value={newNote.content}
-            onChange={handleInputChange}
-          />
+        </div>
+
+        <form className="note-form" onSubmit={addNote}>
+          <input name="title" type="text" placeholder="Judul Catatan" maxLength="50" />
+          <textarea name="body" placeholder="Isi Catatan" />
           <button type="submit">Tambah Catatan</button>
         </form>
       </div>
@@ -73,16 +76,17 @@ const App = () => {
       <div className="note-list-container">
         <div className="note-list">
           <h2>Catatan Aktif</h2>
-          {filteredNotes.length > 0 ? (
-            filteredNotes.map((note) => (
+          {filteredNotes.filter(note => !note.archived).length > 0 ? (
+            filteredNotes.filter(note => !note.archived).map((note) => (
               <div key={note.id} className="note-item">
                 <div className="note-content">
                   <h3>{note.title}</h3>
-                  <p>{note.content}</p>
+                  <p>{note.body}</p>
+                  <small>{`Dibuat pada: ${formatDate(note.createdAt)}`}</small>
                 </div>
                 <div className="note-actions">
-                  <button onClick={() => handleArchive(note.id)}>Arsipkan</button>
-                  <button onClick={() => handleDelete(note.id)}>Hapus</button>
+                  <button onClick={() => toggleArchiveNote(note.id)}>Arsipkan</button>
+                  <button onClick={() => deleteNote(note.id)}>Hapus</button>
                 </div>
               </div>
             ))
@@ -93,16 +97,17 @@ const App = () => {
 
         <div className="note-list">
           <h2>Catatan Arsip</h2>
-          {notes.filter(note => note.archived).length > 0 ? (
-            notes.filter(note => note.archived).map((note) => (
+          {filteredNotes.filter(note => note.archived).length > 0 ? (
+            filteredNotes.filter(note => note.archived).map((note) => (
               <div key={note.id} className="note-item">
                 <div className="note-content">
                   <h3>{note.title}</h3>
-                  <p>{note.content}</p>
+                  <p>{note.body}</p>
+                  <small>{`Dibuat pada: ${formatDate(note.createdAt)}`}</small>
                 </div>
                 <div className="note-actions">
-                  <button onClick={() => handleUnarchive(note.id)}>Unarchive</button>
-                  <button onClick={() => handleDelete(note.id)}>Hapus</button>
+                  <button onClick={() => toggleArchiveNote(note.id)}>Aktifkan</button>
+                  <button onClick={() => deleteNote(note.id)}>Hapus</button>
                 </div>
               </div>
             ))
@@ -113,25 +118,6 @@ const App = () => {
       </div>
     </div>
   );
-
-  // Fungsi untuk mengarsipkan catatan
-  function handleArchive(id) {
-    setNotes(notes.map(note => 
-      note.id === id ? { ...note, archived: true } : note
-    ));
-  }
-
-  // Fungsi untuk membatalkan arsip catatan
-  function handleUnarchive(id) {
-    setNotes(notes.map(note => 
-      note.id === id ? { ...note, archived: false } : note
-    ));
-  }
-
-  // Fungsi untuk menghapus catatan
-  function handleDelete(id) {
-    setNotes(notes.filter(note => note.id !== id));
-  }
 };
 
 export default App;
