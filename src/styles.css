@@ -1,0 +1,113 @@
+/* Reset CSS untuk elemen-elemen dasar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Styling untuk body */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* Gradient berwarna ungu dan biru untuk seluruh halaman */
+  color: #f1f1f1; /* Teks terang untuk kontras */
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  width: 100%;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Header Navbar dengan judul "Notes App" */
+header {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;  /* Kecilkan padding */
+  font-size: 1.5rem;  /* Kecilkan ukuran font */
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* Styling untuk pencarian */
+.search-box {
+  margin-top: 120px;  /* Memberikan jarak dari header */
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  text-align: center;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #333;
+  color: #f1f1f1;
+}
+
+/* Styling untuk formulir input catatan */
+.note-form {
+  width: 100%;
+  max-width: 600px;
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  margin-top: 20px; /* Menurunkan formulir lebih jauh ke bawah */
+}
+
+.note-form input,
+.note-form textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #333;
+  color: #f1f1f1;
+  margin-bottom: 10px;
+}
+
+.note-form button {
+  width: 100%;
+  max-width: 150px;
+  padding: 12px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Styling untuk daftar catatan */
+.note-list-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.note-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #444;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.note-actions button {
+  margin-left: 10px;
+}
